@@ -1,4 +1,5 @@
 #include <Servo.h>
+#include <math.h>
 
 int ldr = A0;
 int ldr2 = A1;
@@ -19,43 +20,24 @@ void loop()
   int reading = analogRead(ldr);
   int reading2 = analogRead(ldr2);
   int reading3 = analogRead(ldr3);
-  int brightestSensor = brightest(reading, reading2, reading3);
-
-  //sensor readings
-  Serial.print("Reading 1: ");
-  Serial.print(reading);
-  Serial.println(" ");
-  delay(500);
-  Serial.print("Reading 2: ");
-  Serial.print(reading2);
-  Serial.println(" ");
-  delay(500);
-  Serial.print("Reading 3: ");
-  Serial.print(reading3);
-  Serial.println(" ");
-  delay(500);
 
   //servo motor turn angle
-  moveMotor(brightestSensor);
-  // delay(5000);
+  moveMotor(reading, reading2, reading3);
 }
 
-int brightest(int reading1, int reading2, int reading3)
+void  moveMotor(int reading1, int reading2, int reading3)
 {
-  if (reading1 > reading2 && reading1 > reading3)
-    return (ldr);
-  else if (reading2 > reading1 && reading2 > reading3)
-    return (ldr2);
-  else
-    return (ldr3);
-}
+  int result;
+  int diffA = reading1 - reading2;
+  int diffB = reading3 - reading2;
 
-void  moveMotor(int brightestLdr)
-{
-  if (brightestLdr == ldr)
-    motor.write(180);
-  else if (brightestLdr == ldr2)
-    motor.write(90);
+  if (abs(diffA) > abs(diffB))
+  {
+    result = map(diffA, -900, 900, 90, 0);
+  }
   else
-    motor.write(0);
+  {
+    result = map(diffB, -900, 900, 90, 180);
+  }
+  motor.write(result);
 }
