@@ -5,6 +5,7 @@ int ldr = A0;
 int ldr2 = A1;
 int ldr3 = A2;
 Servo motor;
+Servo motor2;
 
 void setup()
 {
@@ -12,6 +13,7 @@ void setup()
   pinMode(ldr2, INPUT);
   pinMode(ldr3, INPUT);
   motor.attach(3);
+  motor2.attach(11);
   Serial.begin(9600);
 }
 
@@ -23,6 +25,7 @@ void loop()
 
   //servo motor turn angle
   moveMotor(reading, reading2, reading3);
+  moveMotor2(reading2);
 }
 
 void  moveMotor(int reading1, int reading2, int reading3)
@@ -40,4 +43,9 @@ void  moveMotor(int reading1, int reading2, int reading3)
     result = map(diffB, -900, 900, 90, 180);
   }
   motor.write(result);
+}
+
+void  moveMotor2(int reading2)
+{
+  motor2.write(map(reading2, 0, 1023, 0, 180));
 }
