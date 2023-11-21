@@ -4,6 +4,7 @@
 int ldr = A0;
 int ldr2 = A1;
 int ldr3 = A2;
+int lastPosition = 500;
 Servo motor;
 Servo motor2;
 
@@ -23,7 +24,6 @@ void loop()
   int reading2 = analogRead(ldr2);
   int reading3 = analogRead(ldr3);
 
-  //servo motor turn angle
   moveMotor(reading, reading2, reading3);
   moveMotor2(reading2);
 }
@@ -34,15 +34,22 @@ void  moveMotor(int reading1, int reading2, int reading3)
   int diffA = reading1 - reading2;
   int diffB = reading3 - reading2;
 
-  if (abs(diffA) > abs(diffB))
+  if (abs(abs(diffA) - abs(diffB)) > 10)
   {
-    result = map(diffA, -900, 900, 90, 0);
+    if (abs(diffA) > abs(diffB) && abs(diffA) > 20)
+    {
+      result = map(diffA, -900, 900, 90, 0);
+    }
+    else if (abs(diffA) <= abs(diffB) && abs(diffB) > 20)
+    {
+      result = map(diffB, -900, 900, 90, 180);
+    }
   }
-  else
+  if (abs(result - lastPosition) > 10 && (result > 100 || result < 80))
   {
-    result = map(diffB, -900, 900, 90, 180);
+    lastPosition = result;
+    motor.write(result);
   }
-  motor.write(result);
 }
 
 void  moveMotor2(int reading2)
